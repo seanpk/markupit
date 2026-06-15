@@ -49,7 +49,8 @@
     "test:ids": "node scripts/coverage-ids.mjs",
     "lint": "eslint .",
     "format": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "format:fix": "prettier --write .",
+    "prepublishOnly": "npm run lint && npm test"
   },
   "dependencies": {},
   "devDependencies": {
