@@ -1,18 +1,22 @@
-// markupit overlay entry point.
-//
-// Placeholder during the v0.1 build — the real overlay (selection, annotation,
-// queue, export) is implemented in later milestones. It is served from the reserved
-// namespace and self-activates only when the activation flag is present in the URL.
-const ACTIVATION_PARAM = 'markupit';
+// markupit overlay entry point. Injected (dormant) into every served page; it boots the
+// annotation UI only when the activation flag is present in the URL (ACT-2). Without it,
+// the overlay adds zero chrome and never touches the page (ACT-3).
+import { isActivated } from './constants.js';
 
-function isActivated() {
-  try {
-    return new URLSearchParams(location.search).has(ACTIVATION_PARAM);
-  } catch {
-    return false;
-  }
+function start() {
+  // Lazy-import the app so an inactive page pays almost nothing for the injected script.
+  import('./app.js')
+    .then(({ boot }) => boot())
+    .catch((err) => {
+      // Never break the host page (NFR-4); fail quietly.
+      if (typeof console !== 'undefined') console.warn('[markupit] failed to start:', err);
+    });
 }
 
 if (isActivated()) {
-  // Overlay boot happens here in a later milestone.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
 }

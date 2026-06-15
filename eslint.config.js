@@ -55,6 +55,26 @@ export default [
         HTMLElement: 'readonly',
         Node: 'readonly',
         console: 'readonly',
+        addEventListener: 'readonly',
+        removeEventListener: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        innerWidth: 'readonly',
+        innerHeight: 'readonly',
+        confirm: 'readonly',
+      },
+    },
+  },
+  {
+    // Playwright specs: page.evaluate() callbacks execute in the browser, so they
+    // reference browser globals even though the file runs under Node.
+    files: ['test/browser/**'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        getComputedStyle: 'readonly',
       },
     },
   },
