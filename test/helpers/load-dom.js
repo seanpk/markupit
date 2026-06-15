@@ -6,6 +6,7 @@
 // (display:none via a stylesheet rule, off-screen, zero-rect) are verified in the
 // Playwright layer instead. The pure modules accept an `isVisible` callback so tests
 // can supply an attribute/inline-style heuristic here.
+import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -20,6 +21,15 @@ export function loadFixture(relPath) {
 
 export function parse(html) {
   return parseHTML(html);
+}
+
+// IMPORTANT: never pass a linkedom DOM node directly to assert.equal/deepEqual. On a
+// failing assertion node:test deep-inspects both operands to render a diff, and a DOM
+// element's circular parent/child graph serializes into a >100MB string — enough to OOM
+// the process (and, unsandboxed, take the terminal with it). Compare node identity with
+// this boolean helper instead, so only the boolean is ever inspected.
+export function sameNode(actual, expected, message) {
+  assert.ok(actual === expected, message || 'expected the same DOM node');
 }
 
 // A pragmatic visibility heuristic for unit tests: hidden if it (or an ancestor) has an

@@ -10,6 +10,9 @@ build/
 .env
 .env.*
 
+# local agent/editor settings
+.claude/settings.local.json
+
 # test / tooling output
 coverage/
 test-results/

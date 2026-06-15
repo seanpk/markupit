@@ -48,6 +48,7 @@ export default [
         URLSearchParams: 'readonly',
         customElements: 'readonly',
         CSSStyleSheet: 'readonly',
+        structuredClone: 'readonly',
         matchMedia: 'readonly',
         requestAnimationFrame: 'readonly',
         getComputedStyle: 'readonly',
