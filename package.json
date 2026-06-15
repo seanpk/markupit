@@ -1,0 +1,62 @@
+{
+  "name": "markupit",
+  "version": "0.1.0",
+  "description": "Local-first CLI review overlay for web pages — click anything, say what you mean, export a structured brief for an AI agent or developer.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Sean Kennedy",
+  "homepage": "https://github.com/seanpk/markupit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seanpk/markupit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seanpk/markupit/issues"
+  },
+  "keywords": [
+    "markup",
+    "annotation",
+    "review",
+    "overlay",
+    "feedback",
+    "cli",
+    "local-first",
+    "design-review",
+    "ai"
+  ],
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "bin": {
+    "markupit": "bin/markupit.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./server": "./src/server/index.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "assets/overlay/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "npm run test:unit && npm run test:server && npm run test:ids",
+    "test:unit": "node --test \"test/unit/**/*.test.js\"",
+    "test:server": "node --test \"test/server/**/*.test.js\"",
+    "test:browser": "playwright test",
+    "test:ids": "node scripts/coverage-ids.mjs",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@playwright/test": "^1.49.0",
+    "eslint": "^9.17.0",
+    "linkedom": "^0.18.6",
+    "prettier": "^3.4.2"
+  }
+}

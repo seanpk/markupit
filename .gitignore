@@ -10,6 +10,12 @@ build/
 .env
 .env.*
 
+# test / tooling output
+coverage/
+test-results/
+playwright-report/
+.playwright/
+
 # os / editor
 .DS_Store
 .idea/
