@@ -79,26 +79,22 @@ test('[ANN-3] removing an element applies a visible treatment without deleting i
   expect(stillThere).toBeGreaterThan(0);
 });
 
-test('[ANN-7][EXP-1] annotations persist across reload and export to the clipboard', async ({
-  page,
-  context,
-}) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await activate(page);
+async function addComment(page, selector, text) {
+  await page.click(selector);
+  await page.evaluate((value) => {
+    const root = document.querySelector('[data-markupit]').shadowRoot;
+    [...root.querySelectorAll('.mk-btn')].find((b) => b.textContent === 'Comment').click();
+    root.querySelector('.mk-textarea').value = value;
+    [...root.querySelectorAll('.mk-btn')].find((b) => b.textContent === 'Save').click();
+  }, text);
+}
 
-  // Add a comment to the heading.
-  await page.click('h1');
-  await shadow(page).evaluate((el) => {
-    [...el.shadowRoot.querySelectorAll('.mk-btn')].find((b) => b.textContent === 'Comment').click();
-  });
-  await shadow(page).evaluate((el) => {
-    el.shadowRoot.querySelector('.mk-textarea').value = 'Persisted note';
-    [...el.shadowRoot.querySelectorAll('.mk-btn')].find((b) => b.textContent === 'Save').click();
-  });
+test('[ANN-7] annotations persist across a reload and are re-anchored', async ({ page }) => {
+  await activate(page);
+  await addComment(page, 'h1', 'Persisted note');
 
   // Let the debounced persistence flush before reloading.
   await page.waitForTimeout(250);
-  // Reload — the annotation should be re-anchored and its dot restored (ANN-7).
   await page.reload();
   await page.waitForSelector('[data-markupit]', { state: 'attached' });
   await page.waitForTimeout(100);
@@ -106,8 +102,19 @@ test('[ANN-7][EXP-1] annotations persist across reload and export to the clipboa
     (el) => el.shadowRoot.querySelectorAll('.mk-dot').length
   );
   expect(dotsAfter).toBe(1);
+});
 
-  // Open the queue and export (EXP-1).
+// Playwright only supports the clipboard-read/write permission names in Chromium.
+test('[EXP-1] copy notes puts a markdown brief on the clipboard', async ({
+  page,
+  context,
+  browserName,
+}) => {
+  test.skip(browserName !== 'chromium', 'clipboard permissions are Chromium-only in Playwright');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await activate(page);
+  await addComment(page, 'h1', 'Persisted note');
+
   await shadow(page).evaluate((el) => el.shadowRoot.querySelector('.mk-toolbar').click());
   await shadow(page).evaluate((el) =>
     [...el.shadowRoot.querySelectorAll('.mk-btn')]

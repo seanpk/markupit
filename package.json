@@ -43,8 +43,8 @@
   ],
   "scripts": {
     "test": "npm run test:unit && npm run test:server && npm run test:ids",
-    "test:unit": "node --test \"test/unit/**/*.test.js\"",
-    "test:server": "node --test \"test/server/**/*.test.js\"",
+    "test:unit": "node scripts/run-node-tests.mjs test/unit",
+    "test:server": "node scripts/run-node-tests.mjs test/server",
     "test:browser": "playwright test",
     "test:ids": "node scripts/coverage-ids.mjs",
     "lint": "eslint .",
