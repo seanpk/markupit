@@ -44,6 +44,8 @@ export default [
         navigator: 'readonly',
         localStorage: 'readonly',
         location: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
         customElements: 'readonly',
         CSSStyleSheet: 'readonly',
         matchMedia: 'readonly',
