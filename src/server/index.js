@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { RESERVED_PREFIX } from '../constants.js';
 import { safeJoin, serveFile } from './static.js';
+import { injectOverlay } from './inject.js';
 import { contentTypeFor } from './mime.js';
 
 const overlayDir = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'assets', 'overlay');
@@ -89,6 +90,11 @@ async function servePage(req, res, source, pathname) {
 
   try {
     const file = await serveFile(abs);
+    if (file.isHtml) {
+      // Inject the (dormant) overlay before </body>; it self-activates on ?markupit.
+      const injected = injectOverlay(file.body.toString('utf8'));
+      return send(res, 200, { 'content-type': file.contentType, ...NO_STORE }, injected);
+    }
     return send(res, 200, { 'content-type': file.contentType, ...NO_STORE }, file.body);
   } catch {
     return notFound(res);
