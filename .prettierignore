@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+test-results/
+playwright-report/
+assets/logo/
+assets/*.jpg
+docs/
+*.md
+.github/
+*.yml
+*.yaml

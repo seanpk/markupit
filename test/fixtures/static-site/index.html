@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acme — Pricing</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .promo {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="./index.html">Home</a>
+        <a href="./about.html">About</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="hero">
+        <h1>Simple, honest pricing</h1>
+        <p class="promo">Pick a plan. Change it whenever. No surprises.</p>
+        <button type="button">Start free trial</button>
+      </section>
+
+      <section id="plans">
+        <h2>Plans</h2>
+        <ul>
+          <li>Starter — $0</li>
+          <li>Team — $12 / seat</li>
+          <li>Enterprise — let's talk</li>
+        </ul>
+        <figure>
+          <img src="./team.png" alt="The Acme team waving" />
+          <figcaption>Real humans, allegedly.</figcaption>
+        </figure>
+      </section>
+
+      <!-- Hidden + non-content nodes: these must never be selectable (SEL-6). -->
+      <div style="display: none">Hidden marketing copy that should be ignored.</div>
+      <template id="card-template"><div class="card"></div></template>
+    </main>
+
+    <footer>
+      <p>© Acme, Inc.</p>
+    </footer>
+
+    <script>
+      // Page's own script — must remain functional when the overlay is active (NFR-4),
+      // and must never itself be a selection candidate (SEL-6).
+      window.__acmeReady = true;
+    </script>
+  </body>
+</html>

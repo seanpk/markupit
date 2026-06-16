@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  unit-server:
+    name: unit + server (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['20.x', '22.x', '24.x']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: assert zero runtime dependencies (NFR-1)
+        run: |
+          node -e "const p=require('./package.json');const d=Object.keys(p.dependencies||{});if(d.length){throw new Error('runtime deps must be empty, found '+d.join(', '))}"
+      - run: npm run lint
+      - run: npm run test:unit
+      - run: npm run test:server
+      - run: npm run test:ids
+
+  browser:
+    name: browser (playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run test:browser

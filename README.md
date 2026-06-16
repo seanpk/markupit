@@ -1,9 +1,13 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/seanpk/markupit/master/assets/logo/logo-stacked.svg" alt="markupit" width="180" />
+</p>
+
 # markupit
 
 **Point it at any web page. Click anything. Say what you mean. Get back a clean, structured brief you can hand to an AI or a developer.**
 
 `markupit` is a lightweight, local-first review overlay for web pages. You run it
-against a local folder of HTML or a live URL, open the page in your browser, and
+against a local folder of HTML or a single file, open the page in your browser, and
 the page becomes *markable*: click any element to leave a comment, edit text in
 place, or mark something for removal. When you're done, you export the whole
 session as a structured prompt — ready to paste into Claude (or any coding agent)
@@ -16,8 +20,8 @@ It compresses the slowest part of the design-feedback loop —
 # review a local build
 npx markupit ./dist
 
-# review a live page
-npx markupit https://example.com
+# review a single file
+npx markupit ./index.html
 ```
 
 Then open the printed `localhost` URL and start marking up.
@@ -30,28 +34,89 @@ Reviewing a web page today is clumsy. You take a screenshot, draw a red box,
 write "make this bigger," and then the person fixing it has to reverse-engineer
 *which element* you meant. Every round trip leaks information.
 
-The tools that try to fix this are either heavyweight SaaS platforms (BugHerd,
-Marker.io), full design suites (Figma), or browser extensions that need to be
-installed in developer mode and can't be scripted. None of them produce output
-designed to be **handed to an AI agent**.
-
 `markupit` is the small, sharp tool in the gap: no account, no extension, no
-build-step integration. A single command, any page, structured output.
-
-> **Status: design phase.** This repository currently contains the specification
-> — vision, requirements, and architecture — not an implementation. It is written
-> to be built from scratch as a clean-room project. See [`docs/`](./docs).
+build-step integration. A single command, any page, structured output designed to
+be **handed to an AI agent**.
 
 ---
 
-## What's in this repo
+## Usage
 
-| Document | What it covers |
-|----------|----------------|
-| [`docs/VISION.md`](./docs/VISION.md) | The product north star — what it feels like to use, and the bar for design quality. |
-| [`docs/REQUIREMENTS.md`](./docs/REQUIREMENTS.md) | Detailed, testable behavioral requirements. The spec a build (and its test suite) is measured against. |
-| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | How the pieces fit: the CLI/server, the two source modes, the overlay engine, packaging, and testing strategy. |
+```
+npx markupit <source> [options]
+```
 
-## The one-line pitch
+**Source**
 
-> A red pen for the web that hands its notes to a robot.
+| Source | What it does |
+|--------|--------------|
+| `<dir>` | Serves a directory of static files; `/` resolves to `index.html`. |
+| `<file.html>` | Serves a single HTML file at `/`. |
+| `<url>` | A live `http(s)` page. **Coming soon** — see [roadmap](#roadmap). |
+
+**Options**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-p, --port <n>` | `4870` | Port to listen on; falls back to the next free port if taken. |
+| `--host <h>` | `127.0.0.1` | Interface to bind. Loopback only by default. |
+| `-o, --open` | off | Open the page in your default browser. |
+| `-h, --help` | | Show help. |
+| `-v, --version` | | Show version. |
+
+The tool prints a URL with `?markupit` appended — that flag activates the overlay.
+The same page **without** the flag is byte-for-byte the original.
+
+## Marking up
+
+- **Hover** any element to highlight it; **click** to select it.
+- A small popover offers **Comment**, **Edit**, and **Remove**.
+- Keyboard: `c` comment, `e` edit, `r` remove, `[` / `]` widen/narrow the
+  selection, `Esc` to dismiss, `⌘/Ctrl+Shift+C` to export.
+- The pill in the corner shows a live count and opens the **queue** — every note
+  in one place. **Copy notes** puts a clean markdown brief on your clipboard.
+
+Your review lives only in your browser (localStorage) and survives a reload.
+Nothing leaves your machine until you copy it out.
+
+## How it works
+
+markupit is two cooperating halves that meet at the served HTML:
+
+- A tiny **Node dev server** sources and serves the page, and injects a dormant
+  overlay script before `</body>`. It knows nothing about your annotations.
+- A vanilla-JS **overlay** runs in the page inside a Shadow DOM (so its styles
+  neither leak into nor are overridden by the page). It self-activates only when
+  the `?markupit` flag is present.
+
+No framework, **zero runtime dependencies**, pure ESM, no build step to use it.
+
+## Roadmap
+
+- **Proxy URL mode** — review a live `http(s)` page by fetching it server-side
+  (asset rewriting + header stripping). Designed but not yet shipped.
+- **Draggable popover** — move the comment/edit box aside to read the surrounding
+  page while composing.
+- **Annotate interactive content** — let the reviewer trigger the page's own
+  actions (open a menu, expand an accordion) and annotate elements that only
+  appear after a JS-driven interaction, rather than intercepting every click.
+- **Multi-page reviews** — follow links and collect annotations across several
+  pages into a single review brief.
+
+## Development
+
+```bash
+npm install
+npm test                 # unit + server + requirement-coverage gate
+npm run test:browser     # Playwright (run `npx playwright install` first)
+```
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the test-first workflow and the
+project's hard constraints. The specification lives in [`docs/`](./docs):
+[`VISION.md`](./docs/VISION.md), [`REQUIREMENTS.md`](./docs/REQUIREMENTS.md),
+[`ARCHITECTURE.md`](./docs/ARCHITECTURE.md), and the build plan in
+[`docs/PLAN-0.1.md`](./docs/PLAN-0.1.md).
+
+## License
+
+[MIT](./LICENSE) © Sean Kennedy

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hostile styles</title>
+    <style>
+      /* A deliberately aggressive page stylesheet. The overlay's own chrome must be
+         immune to this (UX-10): shadow-DOM encapsulation should keep these rules out. */
+      * {
+        color: red !important;
+        font-family: 'Comic Sans MS', cursive !important;
+        all: revert;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Everything here is hostile</h1>
+      <p>If the overlay turns red or changes font, encapsulation failed.</p>
+    </main>
+  </body>
+</html>
