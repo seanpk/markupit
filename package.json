@@ -1,6 +1,6 @@
 {
   "name": "@seanpk/markupit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local-first CLI review overlay for web pages — click anything, say what you mean, export a structured brief for an AI agent or developer.",
   "type": "module",
   "license": "MIT",
