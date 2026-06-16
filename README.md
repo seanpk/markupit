@@ -27,21 +27,21 @@ npx @seanpk/markupit ./index.html
 Then open the printed `localhost` URL and start marking up.
 
 <p align="center">
-  <a href="https://github.com/seanpk/markupit/blob/master/docs/media/demo.webm">
-    <img src="https://raw.githubusercontent.com/seanpk/markupit/master/docs/media/select.png" alt="Selecting an element opens comment / edit / remove actions" width="820" />
+  <a href="docs/media/demo.webm">
+    <img src="docs/media/select.png" alt="Selecting an element opens comment / edit / remove actions" width="820" />
   </a>
   <br />
-  <em>Click any element — comment, edit text, or mark it for removal. &nbsp;▶ <a href="https://github.com/seanpk/markupit/blob/master/docs/media/demo.webm">Watch the demo</a></em>
+  <em>Click any element — comment, edit text, or mark it for removal. &nbsp;▶ <a href="docs/media/demo.webm">Watch the demo</a></em>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/seanpk/markupit/master/docs/media/comment.png" alt="Typing a comment in the popover; the popover can be dragged by its title bar" width="820" />
+  <img src="docs/media/comment.png" alt="Typing a comment in the popover; the popover can be dragged by its title bar" width="820" />
   <br />
   <em>Say what you mean, in place — drag the popover aside by its title bar if it's in the way.</em>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/seanpk/markupit/master/docs/media/queue.png" alt="A marked-up page with the review queue: comments, an in-place edit, and a removal" width="820" />
+  <img src="docs/media/queue.png" alt="A marked-up page with the review queue: comments, an in-place edit, and a removal" width="820" />
   <br />
   <em>Every mark becomes a structured note — export them all as one brief.</em>
 </p>
