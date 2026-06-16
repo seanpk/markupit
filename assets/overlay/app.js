@@ -47,7 +47,7 @@ export function boot() {
   const tracker = createTracker();
 
   const highlight = createHighlight(root, tracker);
-  const popover = createPopover(root);
+  const popover = createPopover(root, tracker);
   const toast = createToast(root);
   const confirm = createConfirm(root);
   const hint = createHint(root);
