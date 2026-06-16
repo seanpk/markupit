@@ -39,6 +39,7 @@
     "src/",
     "assets/overlay/",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
