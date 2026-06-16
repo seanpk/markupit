@@ -1,0 +1,47 @@
+name: Release
+
+# Publishes to npm when a GitHub Release is published (tag `vX.Y.Z`).
+# Uses npm Trusted Publishing (OIDC) — no NPM_TOKEN secret — and attaches
+# build provenance. See docs/RELEASING.md for the end-to-end flow and the
+# one-time npm trusted-publisher setup.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write # required for OIDC trusted publishing + provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
+      # Trusted publishing requires a recent npm.
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - name: Verify release tag matches package.json version
+        run: |
+          PKG="$(node -p "require('./package.json').version")"
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$PKG" != "$TAG" ]; then
+            echo "::error::Release tag ${GITHUB_REF_NAME} (=$TAG) does not match package.json version $PKG"
+            exit 1
+          fi
+          echo "Publishing version $PKG"
+
+      - run: npm run lint
+      - run: npm test
+
+      # Trusted publishing mints a short-lived token via OIDC; --provenance
+      # attaches the signed build attestation. --access public is required for
+      # a scoped package's first publish and harmless thereafter.
+      - run: npm publish --provenance --access public
