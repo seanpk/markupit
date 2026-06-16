@@ -4,7 +4,7 @@
 // action so the marked-up page reads like a proof-read manuscript (UX-3).
 //
 // Note: 0.1 uses a system font stack rather than a bundled DM Sans woff2 (avoids shipping
-// a binary and keeps the overlay fully offline). Bundling the brand font is a follow-up.
+// a binary and keeps the overlay fully offline). Bundling the brand font is a follow-up (#6).
 
 export const CSS = `
 :host {
