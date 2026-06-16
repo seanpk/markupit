@@ -14,6 +14,8 @@ export function load() {
     if (!parsed || typeof parsed !== 'object' || !parsed.annotations) {
       return createState(pageKey());
     }
+    // Backward-compat: states saved before review-note history lack the field.
+    if (!Array.isArray(parsed.history)) parsed.history = [];
     return parsed;
   } catch {
     return createState(pageKey());
@@ -36,12 +38,4 @@ export function save(state, { immediate = false } = {}) {
   }
   if (timer) clearTimeout(timer);
   timer = setTimeout(write, 150);
-}
-
-export function clear() {
-  try {
-    localStorage.removeItem(pageKey());
-  } catch {
-    /* ignore */
-  }
 }

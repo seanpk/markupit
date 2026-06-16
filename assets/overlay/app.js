@@ -7,7 +7,7 @@ import { makeAnchor } from './core/ids.js';
 import { textSnippet } from './core/snippet.js';
 import { widen } from './core/selectable.js';
 import { toMarkdown } from './core/export.js';
-import { load, save, clear } from './dom/persistence.js';
+import { load, save } from './dom/persistence.js';
 import { resolveAll } from './dom/anchor.js';
 import { createTracker, scrollIntoViewCentered, rectOf } from './dom/geometry.js';
 import { createSelection } from './dom/selection.js';
@@ -55,6 +55,9 @@ export function boot() {
     onExport: () => doExport(),
     onReset: () => doReset(),
     onClose: () => queue.close(),
+    onCopyHistory: (id) => doCopyHistory(id),
+    onDeleteHistory: (id) => doDeleteHistory(id),
+    onClearHistory: () => doClearHistory(),
   });
   const toolbar = createToolbar(root, () => queue.toggle());
 
@@ -204,9 +207,14 @@ export function boot() {
     toast(ok ? 'Copied notes to clipboard' : 'Copy failed — select and copy manually');
   }
 
-  function doReset() {
+  async function doReset() {
     if (model.liveCount(state) === 0) return;
-    if (!confirm('Clear all annotations for this page?')) return;
+    const ok = await confirm('Clear all annotations for this page?', {
+      okText: 'Clear',
+      cancelText: 'Cancel',
+      danger: true,
+    });
+    if (!ok) return;
     for (const [id, entry] of Object.entries(state.annotations)) {
       const el = elements.get(id);
       if (!el) continue;
@@ -214,13 +222,52 @@ export function boot() {
       if (entry.remove) revertRemoveTreatment(el);
     }
     elements.clear();
-    state = model.resetAll(state);
-    clear();
+    // Keep the cleared notes as a timestamped history batch instead of discarding them.
+    const at = Date.now();
+    state = model.archiveAndReset(state, {
+      id: `${at}-${state.revision}`,
+      at,
+      pageTitle: document.title,
+      pageUrl: location.href,
+    });
     save(state, { immediate: true });
     popover.close();
     highlight.clear();
     render();
-    toast('Reset');
+    toast('Cleared — kept in history');
+  }
+
+  // --- history ---
+  async function doCopyHistory(id) {
+    const batch = (state.history || []).find((b) => b.id === id);
+    if (!batch) return;
+    const md = toMarkdown(
+      { annotations: batch.annotations },
+      { pageUrl: batch.pageUrl, pageTitle: batch.pageTitle }
+    );
+    const ok = await copyText(md);
+    toast(ok ? 'Copied notes to clipboard' : 'Copy failed — select and copy manually');
+  }
+
+  function doDeleteHistory(id) {
+    state = model.deleteHistoryBatch(state, id);
+    save(state, { immediate: true });
+    render();
+    toast('History entry deleted');
+  }
+
+  async function doClearHistory() {
+    if (!(state.history || []).length) return;
+    const ok = await confirm('Clear all history? This can’t be undone.', {
+      okText: 'Clear history',
+      cancelText: 'Cancel',
+      danger: true,
+    });
+    if (!ok) return;
+    state = model.clearHistory(state);
+    save(state, { immediate: true });
+    render();
+    toast('History cleared');
   }
 
   // --- keyboard (UX-7) ---

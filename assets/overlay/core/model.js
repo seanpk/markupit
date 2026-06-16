@@ -4,7 +4,7 @@
 // individually reversible (ANN-4).
 
 export function createState(pageKey) {
-  return { pageKey, annotations: {}, revision: 0, seq: 0 };
+  return { pageKey, annotations: {}, history: [], revision: 0, seq: 0 };
 }
 
 function clone(state) {
@@ -99,9 +99,32 @@ export function clearElement(state, id) {
   return s;
 }
 
-export function resetAll(state) {
+// Clear the live set, but keep the cleared notes as a timestamped history batch (one entry
+// per clear) rather than discarding them. The model stays pure — the caller supplies `id`,
+// `at`, and the page meta. An empty live set archives nothing.
+export function archiveAndReset(state, { id, at, pageTitle = '', pageUrl = '' } = {}) {
   const s = clone(state);
+  if (!Array.isArray(s.history)) s.history = [];
+  if (Object.keys(s.annotations).length > 0) {
+    s.history.push({ id, at, pageTitle, pageUrl, annotations: s.annotations });
+  }
   s.annotations = {};
+  s.revision++;
+  return s;
+}
+
+export function deleteHistoryBatch(state, batchId) {
+  const s = clone(state);
+  if (Array.isArray(s.history)) {
+    s.history = s.history.filter((b) => b.id !== batchId);
+  }
+  s.revision++;
+  return s;
+}
+
+export function clearHistory(state) {
+  const s = clone(state);
+  s.history = [];
   s.revision++;
   return s;
 }
@@ -118,14 +141,36 @@ export function orderedEntries(state) {
   return Object.values(state.annotations).sort((a, b) => a.order - b.order);
 }
 
-// Total number of annotations across all elements (QUE-4). An element with a comment and
-// a remove counts as two.
-export function liveCount(state) {
-  let n = 0;
-  for (const e of Object.values(state.annotations)) {
-    if (e.comment) n++;
-    if (e.edit) n++;
-    if (e.remove) n++;
+// History batches, newest first (QUE-6). Each batch is a snapshot of the live set at the
+// moment it was cleared.
+export function historyBatches(state) {
+  const h = Array.isArray(state.history) ? state.history : [];
+  return [...h].sort((a, b) => b.at - a.at);
+}
+
+// Count annotation kinds across a snapshot's entries. An element with a comment and a
+// remove contributes to both counts (and two toward `total`).
+export function summarizeKinds(annotations) {
+  const counts = { comment: 0, edit: 0, remove: 0, total: 0 };
+  for (const e of Object.values(annotations || {})) {
+    if (e.comment) {
+      counts.comment++;
+      counts.total++;
+    }
+    if (e.edit) {
+      counts.edit++;
+      counts.total++;
+    }
+    if (e.remove) {
+      counts.remove++;
+      counts.total++;
+    }
   }
-  return n;
+  return counts;
+}
+
+// Total number of live annotations across all elements (QUE-4). An element with a comment
+// and a remove counts as two.
+export function liveCount(state) {
+  return summarizeKinds(state.annotations).total;
 }

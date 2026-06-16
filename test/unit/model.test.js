@@ -10,7 +10,11 @@ import {
   removeComment,
   revertEdit,
   undoRemove,
-  resetAll,
+  archiveAndReset,
+  deleteHistoryBatch,
+  clearHistory,
+  historyBatches,
+  summarizeKinds,
   liveCount,
   orderedEntries,
 } from '../../assets/overlay/core/model.js';
@@ -63,12 +67,72 @@ test('transitions are pure — the input state is not mutated', () => {
   assert.equal(Object.keys(s1.annotations).length, 1);
 });
 
-test('resetAll clears every annotation', () => {
+test('[QUE-6] archiveAndReset clears the live set but keeps it as a history batch', () => {
   let s = createState('page');
   s = addComment(s, anchorOf('h1'), 'a');
+  s = setEdit(s, anchorOf('button'), 'Start free trial', 'Start your trial');
+  const before = s;
+  s = archiveAndReset(s, { id: 'b1', at: 1000, pageTitle: 'T', pageUrl: 'U' });
+
+  assert.equal(liveCount(s), 0, 'live set is cleared');
+  assert.equal(s.history.length, 1, 'one batch archived');
+  const batch = s.history[0];
+  assert.equal(batch.id, 'b1');
+  assert.equal(batch.at, 1000);
+  assert.equal(batch.pageTitle, 'T');
+  assert.equal(batch.pageUrl, 'U');
+  assert.equal(summarizeKinds(batch.annotations).total, 2, 'both notes preserved in the batch');
+
+  // purity: the input state is untouched
+  assert.equal(liveCount(before), 2);
+  assert.equal(before.history.length, 0);
+});
+
+test('archiveAndReset on an empty live set archives nothing', () => {
+  let s = createState('page');
+  s = archiveAndReset(s, { id: 'b1', at: 1000 });
+  assert.equal(s.history.length, 0);
+});
+
+test('deleteHistoryBatch removes one batch; clearHistory empties all', () => {
+  let s = createState('page');
+  s = addComment(s, anchorOf('h1'), 'a');
+  s = archiveAndReset(s, { id: 'b1', at: 1000 });
   s = addComment(s, anchorOf('button'), 'b');
-  s = resetAll(s);
-  assert.equal(liveCount(s), 0);
+  s = archiveAndReset(s, { id: 'b2', at: 2000 });
+  assert.equal(s.history.length, 2);
+
+  s = deleteHistoryBatch(s, 'b1');
+  assert.deepEqual(
+    s.history.map((b) => b.id),
+    ['b2']
+  );
+
+  s = clearHistory(s);
+  assert.equal(s.history.length, 0);
+});
+
+test('historyBatches lists batches newest-first', () => {
+  let s = createState('page');
+  s = addComment(s, anchorOf('h1'), 'a');
+  s = archiveAndReset(s, { id: 'old', at: 1000 });
+  s = addComment(s, anchorOf('button'), 'b');
+  s = archiveAndReset(s, { id: 'new', at: 2000 });
+  assert.deepEqual(
+    historyBatches(s).map((b) => b.id),
+    ['new', 'old']
+  );
+});
+
+test('summarizeKinds counts each kind and total; liveCount matches', () => {
+  let s = createState('page');
+  const a = anchorOf('h1');
+  s = addComment(s, a, 'hi');
+  s = requestRemove(s, a);
+  s = setEdit(s, anchorOf('button'), 'Start free trial', 'Start your trial');
+  const c = summarizeKinds(s.annotations);
+  assert.deepEqual(c, { comment: 1, edit: 1, remove: 1, total: 3 });
+  assert.equal(liveCount(s), c.total);
 });
 
 test('orderedEntries returns entries by their order index', () => {

@@ -106,8 +106,9 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
 - **ANN-7 (MUST)** — Annotations persist across a page reload within the same
   browser (local persistence), keyed to the page, so a reload mid-review loses
   nothing.
-- **ANN-8 (SHOULD)** — A "reset" action clears all annotations for the current
-  page after confirmation.
+- **ANN-8 (SHOULD)** — A "reset" action clears all live annotations for the
+  current page after confirmation. The clear is non-destructive — the notes are
+  retained as history (see QUE-6), not discarded.
 
 ## F. The queue & overview (`QUE-*`)
 
@@ -119,6 +120,11 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
   element on the page.
 - **QUE-4 (SHOULD)** — A live count of annotations is visible at all times.
 - **QUE-5 (MAY)** — Per-element comment-count badges appear on the page itself.
+- **QUE-6 (SHOULD)** — Clearing the page's notes retains them as timestamped
+  history (one entry per clear) rather than discarding them; history persists
+  across reloads.
+- **QUE-7 (SHOULD)** — A history entry can be copied out as its full notes brief,
+  and history entries can be removed individually or cleared all at once.
 
 ## G. Export (`EXP-*`)
 

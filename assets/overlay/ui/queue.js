@@ -1,9 +1,29 @@
 // The queue / overview panel (QUE-1..4). Lists every annotation in document order with a
 // human label and its kinds, scrolls to an element on click, and hosts Export + Reset.
-import { orderedEntries, liveCount } from '../core/model.js';
+import { orderedEntries, liveCount, historyBatches, summarizeKinds } from '../core/model.js';
 import { labelFor } from '../core/label.js';
 
 const KIND_LABEL = { comment: 'comment', edit: 'edit', remove: 'remove' };
+
+// "3 notes (2 comments, 1 edit)" — a compact description of an archived batch.
+function summaryText(annotations) {
+  const c = summarizeKinds(annotations);
+  const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  const parts = [];
+  if (c.comment) parts.push(plural(c.comment, 'comment'));
+  if (c.edit) parts.push(plural(c.edit, 'edit'));
+  if (c.remove) parts.push(plural(c.remove, 'remove'));
+  const detail = parts.length ? ` (${parts.join(', ')})` : '';
+  return `${plural(c.total, 'note')}${detail}`;
+}
+
+function formatTime(at) {
+  try {
+    return new Date(at).toLocaleString();
+  } catch {
+    return '';
+  }
+}
 
 export function createQueue(root, handlers) {
   const panel = document.createElement('div');
@@ -14,6 +34,10 @@ export function createQueue(root, handlers) {
       <button class="mk-btn mk-close" aria-label="Close">Close</button>
     </div>
     <div class="mk-queue-list"></div>
+    <div class="mk-queue-history" hidden>
+      <button class="mk-history-toggle" aria-expanded="false">History</button>
+      <div class="mk-history-list" hidden></div>
+    </div>
     <div class="mk-queue-foot">
       <button class="mk-btn mk-export">Copy notes</button>
       <button class="mk-btn mk-reset">Reset</button>
@@ -21,9 +45,17 @@ export function createQueue(root, handlers) {
   root.appendChild(panel);
 
   const list = panel.querySelector('.mk-queue-list');
+  const historySection = panel.querySelector('.mk-queue-history');
+  const historyToggle = panel.querySelector('.mk-history-toggle');
+  const historyList = panel.querySelector('.mk-history-list');
   panel.querySelector('.mk-close').addEventListener('click', () => handlers.onClose());
   panel.querySelector('.mk-export').addEventListener('click', () => handlers.onExport());
   panel.querySelector('.mk-reset').addEventListener('click', () => handlers.onReset());
+  historyToggle.addEventListener('click', () => {
+    const expanded = historyToggle.getAttribute('aria-expanded') === 'true';
+    historyToggle.setAttribute('aria-expanded', String(!expanded));
+    historyList.hidden = expanded;
+  });
 
   function render(state) {
     list.textContent = '';
@@ -33,11 +65,60 @@ export function createQueue(root, handlers) {
       empty.className = 'mk-queue-empty';
       empty.textContent = 'Nothing marked yet. Click an element on the page to start.';
       list.appendChild(empty);
-      return;
+    } else {
+      for (const entry of entries) {
+        list.appendChild(renderEntry(entry));
+      }
     }
-    for (const entry of entries) {
-      list.appendChild(renderEntry(entry));
+    renderHistory(state);
+  }
+
+  function renderHistory(state) {
+    const batches = historyBatches(state);
+    historySection.hidden = batches.length === 0;
+    historyToggle.textContent = `History (${batches.length})`;
+    historyList.textContent = '';
+    if (batches.length === 0) return;
+    for (const batch of batches) {
+      historyList.appendChild(renderHistoryItem(batch));
     }
+    const clear = document.createElement('button');
+    clear.className = 'mk-btn mk-history-clear';
+    clear.textContent = 'Clear history';
+    clear.addEventListener('click', () => handlers.onClearHistory());
+    historyList.appendChild(clear);
+  }
+
+  function renderHistoryItem(batch) {
+    const item = document.createElement('div');
+    item.className = 'mk-history-item';
+
+    const meta = document.createElement('div');
+    meta.className = 'mk-history-meta';
+    const time = document.createElement('span');
+    time.className = 'mk-history-time';
+    time.textContent = formatTime(batch.at);
+    const summary = document.createElement('span');
+    summary.className = 'mk-history-summary';
+    summary.textContent = summaryText(batch.annotations);
+    meta.append(time, summary);
+    item.appendChild(meta);
+
+    const actions = document.createElement('div');
+    actions.className = 'mk-history-actions';
+    const copy = document.createElement('button');
+    copy.className = 'mk-btn mk-history-copy';
+    copy.textContent = 'Copy';
+    copy.addEventListener('click', () => handlers.onCopyHistory(batch.id));
+    const del = document.createElement('button');
+    del.className = 'mk-btn mk-history-del';
+    del.setAttribute('aria-label', 'Delete history entry');
+    del.textContent = '×';
+    del.addEventListener('click', () => handlers.onDeleteHistory(batch.id));
+    actions.append(copy, del);
+    item.appendChild(actions);
+
+    return item;
   }
 
   function renderEntry(entry) {

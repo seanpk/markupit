@@ -271,4 +271,48 @@ export const CSS = `
   color: var(--mk-edit);
   cursor: pointer;
 }
+
+/* --- review-note history (in the queue panel) --- */
+.mk-queue-history { border-top: 1px solid var(--mk-border); }
+.mk-history-toggle {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mk-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+}
+.mk-history-toggle:hover { color: var(--mk-ink); }
+.mk-history-toggle:focus-visible { outline: 2px solid var(--mk-edit); outline-offset: -2px; }
+.mk-history-list { max-height: 40vh; overflow-y: auto; padding: 0 12px 8px; }
+.mk-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--mk-border);
+}
+.mk-history-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mk-history-time { font-size: 12px; font-weight: 600; color: var(--mk-ink); }
+.mk-history-summary { font-size: 11px; color: var(--mk-muted); }
+.mk-history-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.mk-history-copy { font-size: 12px; padding: 4px 8px; }
+.mk-history-del {
+  font-size: 14px;
+  line-height: 1;
+  padding: 4px 8px;
+  color: var(--mk-muted);
+}
+.mk-history-del:hover { color: var(--mk-remove); border-color: var(--mk-remove); }
+.mk-history-clear {
+  margin-top: 8px;
+  width: 100%;
+  color: var(--mk-remove);
+  border-color: var(--mk-border);
+}
 `;
