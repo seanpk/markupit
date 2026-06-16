@@ -5,7 +5,7 @@ This checklist captures the subjective `UX-*` qualities from
 [`VISION.md`](./VISION.md) and [`REQUIREMENTS.md`](./REQUIREMENTS.md) that a human
 should tick before each release. Each line traces to a requirement ID.
 
-Run `npx markupit ./test/fixtures/static-site`, open the printed `?markupit` URL, and
+Run `npx @seanpk/markupit ./test/fixtures/static-site`, open the printed `?markupit` URL, and
 walk through:
 
 ## Looks designed, not debug

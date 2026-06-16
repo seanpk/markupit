@@ -18,10 +18,10 @@ It compresses the slowest part of the design-feedback loop —
 
 ```bash
 # review a local build
-npx markupit ./dist
+npx @seanpk/markupit ./dist
 
 # review a single file
-npx markupit ./index.html
+npx @seanpk/markupit ./index.html
 ```
 
 Then open the printed `localhost` URL and start marking up.
@@ -43,8 +43,10 @@ be **handed to an AI agent**.
 ## Usage
 
 ```
-npx markupit <source> [options]
+npx @seanpk/markupit <source> [options]
 ```
+
+> Installed globally (`npm i -g @seanpk/markupit`), the command is just `markupit`.
 
 **Source**
 

@@ -15,7 +15,8 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
 
 ## A. CLI & invocation (`CLI-*`)
 
-- **CLI-1 (MUST)** — Runnable with no global install via `npx markupit <source>`.
+- **CLI-1 (MUST)** — Runnable with no global install via `npx` (published as
+  `@seanpk/markupit`; the `markupit` bin runs the same when installed globally).
 - **CLI-2 (MUST)** — `<source>` accepts a **local path** (a directory of static
   files, or a single `.html` file).
 - **CLI-3 (MUST)** — `<source>` accepts an **http(s) URL**, in which case the tool
