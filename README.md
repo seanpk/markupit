@@ -114,7 +114,8 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the test-first workflow and the
 project's hard constraints. The specification lives in [`docs/`](./docs):
 [`VISION.md`](./docs/VISION.md), [`REQUIREMENTS.md`](./docs/REQUIREMENTS.md),
 [`ARCHITECTURE.md`](./docs/ARCHITECTURE.md), and the build plan in
-[`docs/PLAN-0.1.md`](./docs/PLAN-0.1.md).
+[`docs/PLAN-0.1.md`](./docs/PLAN-0.1.md). Publishing is documented in
+[`docs/RELEASING.md`](./docs/RELEASING.md).
 
 ## License
 
