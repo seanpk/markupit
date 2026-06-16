@@ -129,11 +129,14 @@ test('[ANN-11] a drag past the edge stays within the viewport', async ({ page })
   await openPopover(page, 'h1');
   await dragHeaderBy(page, 5000, 5000);
 
-  const fits = await shadow(page).evaluate((el) => {
-    const p = el.shadowRoot.querySelector('.mk-popover');
-    const r = p.getBoundingClientRect();
-    const m = 8;
-    return r.left >= m - 1 && r.top >= m - 1 && r.right <= innerWidth - m + 1 && r.bottom <= innerHeight - m + 1;
+  const r = await shadow(page).evaluate((el) => {
+    const box = el.shadowRoot.querySelector('.mk-popover').getBoundingClientRect();
+    return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
   });
-  expect(fits).toBe(true);
+  const vp = page.viewportSize();
+  const m = 8;
+  expect(r.left).toBeGreaterThanOrEqual(m - 1);
+  expect(r.top).toBeGreaterThanOrEqual(m - 1);
+  expect(r.right).toBeLessThanOrEqual(vp.width - m + 1);
+  expect(r.bottom).toBeLessThanOrEqual(vp.height - m + 1);
 });
