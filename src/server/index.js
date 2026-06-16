@@ -57,7 +57,7 @@ async function handle(req, res, source) {
   }
 
   if (source.kind === 'proxy') {
-    // Proxy mode is deferred to a later release (handled in milestone 3's stub).
+    // Proxy mode is deferred to a later release (tracked in #2; served by proxy.js stub).
     const { proxyNotAvailable } = await import('./proxy.js');
     return proxyNotAvailable(res, source);
   }

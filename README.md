@@ -93,15 +93,12 @@ No framework, **zero runtime dependencies**, pure ESM, no build step to use it.
 
 ## Roadmap
 
-- **Proxy URL mode** — review a live `http(s)` page by fetching it server-side
-  (asset rewriting + header stripping). Designed but not yet shipped.
-- **Draggable popover** — move the comment/edit box aside to read the surrounding
-  page while composing.
-- **Annotate interactive content** — let the reviewer trigger the page's own
-  actions (open a menu, expand an accordion) and annotate elements that only
-  appear after a JS-driven interaction, rather than intercepting every click.
-- **Multi-page reviews** — follow links and collect annotations across several
-  pages into a single review brief.
+Tracked as [issues](https://github.com/seanpk/markupit/issues) — see each for detail:
+
+- **Proxy URL mode** — review a live `http(s)` page server-side ([#2](https://github.com/seanpk/markupit/issues/2)).
+- **Draggable popover** — move the comment/edit box aside while composing ([#3](https://github.com/seanpk/markupit/issues/3)).
+- **Annotate interactive content** — reach elements that appear only after a page interaction ([#4](https://github.com/seanpk/markupit/issues/4)).
+- **Multi-page reviews** — collect annotations across pages into one brief ([#5](https://github.com/seanpk/markupit/issues/5)).
 
 ## Development
 

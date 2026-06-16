@@ -1,7 +1,7 @@
-// Proxy URL mode is deferred to a later release. Until then, requesting a URL source
-// serves a clear, friendly notice rather than failing obscurely (CLI surfaces the same
-// note at startup). The full implementation will fetch the remote page server-side,
-// rewrite relative assets, and strip CSP / X-Frame-Options (SRC-3,4,5,7).
+// Proxy URL mode is deferred to a later release (tracked in #2). Until then, requesting a
+// URL source serves a clear, friendly notice rather than failing obscurely (CLI surfaces
+// the same note at startup). The full implementation will fetch the remote page
+// server-side, rewrite relative assets, and strip CSP / X-Frame-Options (SRC-3,4,5,7).
 const NO_STORE = {
   'cache-control': 'no-store, must-revalidate',
   pragma: 'no-cache',

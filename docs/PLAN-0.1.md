@@ -116,7 +116,7 @@ emits adjacent items sharing one anchor. A raw-JSON export is offered too (`EXP-
 
 ## Deferred to a later release
 
-Proxy URL mode (`SRC-3,4,5,7`): server-side `fetch`, `<base href>` injection for relative
+Proxy URL mode (`SRC-3,4,5,7`) — tracked in [#2](https://github.com/seanpk/markupit/issues/2): server-side `fetch`, `<base href>` injection for relative
 assets, stripping CSP / X-Frame-Options / COOP / COEP, dropping content-encoding/length
 after body mutation, and a graceful 502 on fetch failure. The interaction to get right
 then: the overlay `assetBase` must be the fully-qualified local origin
