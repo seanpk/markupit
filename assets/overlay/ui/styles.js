@@ -105,14 +105,31 @@ export const CSS = `
   from { opacity: 0; transform: scale(0.92); }
   to { opacity: 1; transform: scale(1); }
 }
+.mk-pop-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  cursor: move;
+  touch-action: none; /* a touch-drag moves the popover, not the page */
+}
+.mk-grip {
+  flex-shrink: 0;
+  display: inline-flex;
+  color: var(--mk-muted);
+}
+.mk-grip svg { display: block; width: 12px; height: 12px; }
+.mk-pop-head:hover .mk-grip { color: var(--mk-slate); }
 .mk-label {
+  flex: 1;
+  min-width: 0;
   font-size: 12px;
   color: var(--mk-muted);
-  margin: 0 0 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.mk-popover.mk-dragging { user-select: none; }
 .mk-actions { display: flex; gap: 6px; }
 .mk-btn {
   font: inherit;

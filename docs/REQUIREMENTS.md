@@ -115,6 +115,10 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
   its popover is open, legibly on any page background.
 - **ANN-10 (SHOULD)** — While composing a comment or edit, interacting with the
   page does not dismiss the popover or discard the in-progress text.
+- **ANN-11 (SHOULD)** — The annotation popover can be dragged by its title bar to
+  reposition it; the position is clamped to the viewport, preserved across
+  re-renders, and composing text is never lost. Selecting a different element
+  re-anchors it.
 
 ## F. The queue & overview (`QUE-*`)
 

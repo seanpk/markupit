@@ -28,6 +28,21 @@ export function placePopover(point, size, margin = 8) {
   return { left, top };
 }
 
+/**
+ * Clamp a box of `size` so it sits fully inside the viewport with a `margin` gutter. Unlike
+ * placePopover this applies no offset/flip — it's for a position the user chose (a drag), kept
+ * on-screen. Degrades gracefully when the box is larger than the viewport (pins to the margin
+ * rather than going negative).
+ */
+export function clampBox(left, top, size, margin = 8) {
+  const maxLeft = Math.max(margin, innerWidth - size.width - margin);
+  const maxTop = Math.max(margin, innerHeight - size.height - margin);
+  return {
+    left: Math.min(Math.max(left, margin), maxLeft),
+    top: Math.min(Math.max(top, margin), maxTop),
+  };
+}
+
 export function scrollIntoViewCentered(el) {
   el.scrollIntoView({
     behavior: prefersReducedMotion() ? 'auto' : 'smooth',
