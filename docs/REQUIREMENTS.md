@@ -170,6 +170,8 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
   Safari, and is responsive down to a tablet width.
 - **UX-10 (MUST)** — The overlay's styles are isolated so they neither leak into
   the reviewed page nor get overridden by it (e.g. style encapsulation).
+- **UX-11 (SHOULD)** — Confirmations and prompts use styled in-overlay UI, never
+  native browser dialogs (`window.confirm`/`alert`/`prompt`).
 
 ## I. Quality & non-functional (`NFR-*`)
 

@@ -17,6 +17,7 @@ import { createPopover } from './ui/popover.js';
 import { createQueue } from './ui/queue.js';
 import { createToolbar } from './ui/toolbar.js';
 import { createToast } from './ui/toast.js';
+import { createConfirm } from './ui/confirm.js';
 import { createHint } from './ui/hint.js';
 import {
   createDots,
@@ -48,6 +49,7 @@ export function boot() {
   const highlight = createHighlight(root, tracker);
   const popover = createPopover(root);
   const toast = createToast(root);
+  const confirm = createConfirm(root);
   const hint = createHint(root);
   const dots = createDots(root, tracker, (id) => locate(id));
   const queue = createQueue(root, {

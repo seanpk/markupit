@@ -315,4 +315,34 @@ export const CSS = `
   color: var(--mk-remove);
   border-color: var(--mk-border);
 }
+
+/* --- confirmation dialog (styled replacement for window.confirm) --- */
+.mk-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(27, 42, 59, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.mk-dialog {
+  background: var(--mk-surface);
+  border: 1px solid var(--mk-border);
+  border-radius: var(--mk-radius);
+  box-shadow: var(--mk-shadow);
+  padding: 20px;
+  max-width: 360px;
+  width: 100%;
+}
+.mk-dialog.mk-anim { animation: mk-grow var(--mk-dur) var(--mk-ease); }
+.mk-dialog-msg { font-size: 14px; font-weight: 600; color: var(--mk-ink); }
+.mk-dialog-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.mk-btn.mk-danger {
+  background: var(--mk-remove);
+  border-color: var(--mk-remove);
+  color: var(--mk-surface);
+}
+.mk-btn.mk-danger:hover { background: #c23b3b; border-color: #c23b3b; }
 `;
