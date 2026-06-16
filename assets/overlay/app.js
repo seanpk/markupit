@@ -105,8 +105,17 @@ export function boot() {
     }
   }
 
+  // True while the popover is in a text-entry mode (comment/edit) with unsaved input.
+  function isComposing() {
+    const m = popover.getMode();
+    return m === 'comment' || m === 'edit';
+  }
+
   // --- opening the action popover ---
   function openForSelection(el, point) {
+    // While composing a comment or edit, a stray click on the page must not swap the
+    // popover or discard in-progress text (ANN-10).
+    if (popover.isOpen() && isComposing()) return;
     const anchor = makeAnchor(el, textSnippet(el));
     highlight.setSelected(el);
     popover.open({

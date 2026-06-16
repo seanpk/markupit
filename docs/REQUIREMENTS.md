@@ -110,6 +110,10 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
   current page after confirmation. The clear is non-destructive — the notes are
   retained as history (see QUE-6), not discarded. The confirmation also offers a
   one-step "copy notes and clear".
+- **ANN-9 (SHOULD)** — The element being annotated stays visibly highlighted while
+  its popover is open, legibly on any page background.
+- **ANN-10 (SHOULD)** — While composing a comment or edit, interacting with the
+  page does not dismiss the popover or discard the in-progress text.
 
 ## F. The queue & overview (`QUE-*`)
 

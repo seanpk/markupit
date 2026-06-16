@@ -189,3 +189,50 @@ test('[QUE-7] deleting a history entry can be cancelled', async ({ page }) => {
   expect(await historyCount(page)).toBe(1);
 });
 
+// Enter comment mode on the current selection and type (without saving).
+async function startComment(page, text) {
+  await page.evaluate((text) => {
+    const root = document.querySelector('[data-markupit]').shadowRoot;
+    [...root.querySelectorAll('.mk-btn')].find((b) => b.textContent === 'Comment').click();
+    root.querySelector('.mk-textarea').value = text;
+  }, text);
+}
+
+test('[ANN-10] composing a comment is not dismissed by clicking elsewhere on the page', async ({
+  page,
+}) => {
+  await activate(page);
+  await page.click('h1');
+  await startComment(page, 'work in progress');
+
+  // A stray click on another page element must not swap or discard the popover.
+  await page.click('button');
+
+  const value = await shadow(page).evaluate((el) => {
+    const ta = el.shadowRoot.querySelector('.mk-textarea');
+    return ta ? ta.value : null;
+  });
+  expect(value).toBe('work in progress');
+});
+
+test('[ANN-9] the focused element stays highlighted while its popover is open', async ({ page }) => {
+  await activate(page);
+  await page.click('h1');
+
+  // The placed (target) opacity — not the mid-transition computed value.
+  const selectedShown = (page) =>
+    shadow(page).evaluate((el) => el.shadowRoot.querySelector('.mk-rect.mk-selected').style.opacity);
+
+  expect(await selectedShown(page)).toBe('1');
+
+  // ...and it persists once we enter comment mode.
+  await startComment(page, 'note');
+  expect(await selectedShown(page)).toBe('1');
+
+  // A contrast ring keeps it legible on dark backgrounds (not just the ink border).
+  const ring = await shadow(page).evaluate(
+    (el) => getComputedStyle(el.shadowRoot.querySelector('.mk-rect.mk-selected')).boxShadow
+  );
+  expect(ring).not.toBe('none');
+});
+

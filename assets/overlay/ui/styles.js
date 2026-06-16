@@ -65,6 +65,9 @@ export const CSS = `
 .mk-rect.mk-selected {
   border: 2px solid var(--mk-ink);
   background: rgba(27, 42, 59, 0.06);
+  /* A white outer ring keeps the focus outline legible on dark page backgrounds,
+     where the ink border alone would disappear. */
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 2px 10px -2px rgba(27, 42, 59, 0.35);
 }
 
 /* on-page annotation dots */
