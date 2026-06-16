@@ -5,6 +5,9 @@ import { labelFor } from '../core/label.js';
 
 const KIND_LABEL = { comment: 'comment', edit: 'edit', remove: 'remove' };
 
+// Inline trash-can icon (stroked, inherits currentColor) for the delete-history control.
+const TRASH_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
+
 // "3 notes (2 comments, 1 edit)" — a compact description of an archived batch.
 function summaryText(annotations) {
   const c = summarizeKinds(annotations);
@@ -113,7 +116,8 @@ export function createQueue(root, handlers) {
     const del = document.createElement('button');
     del.className = 'mk-btn mk-history-del';
     del.setAttribute('aria-label', 'Delete history entry');
-    del.textContent = '×';
+    del.title = 'Delete history entry';
+    del.innerHTML = TRASH_ICON;
     del.addEventListener('click', () => handlers.onDeleteHistory(batch.id));
     actions.append(copy, del);
     item.appendChild(actions);

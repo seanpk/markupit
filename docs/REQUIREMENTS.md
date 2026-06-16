@@ -108,7 +108,8 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
   nothing.
 - **ANN-8 (SHOULD)** — A "reset" action clears all live annotations for the
   current page after confirmation. The clear is non-destructive — the notes are
-  retained as history (see QUE-6), not discarded.
+  retained as history (see QUE-6), not discarded. The confirmation also offers a
+  one-step "copy notes and clear".
 
 ## F. The queue & overview (`QUE-*`)
 

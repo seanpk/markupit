@@ -303,11 +303,13 @@ export const CSS = `
 .mk-history-actions { display: flex; gap: 6px; flex-shrink: 0; }
 .mk-history-copy { font-size: 12px; padding: 4px 8px; }
 .mk-history-del {
-  font-size: 14px;
-  line-height: 1;
-  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
   color: var(--mk-muted);
 }
+.mk-history-del svg { display: block; width: 15px; height: 15px; }
 .mk-history-del:hover { color: var(--mk-remove); border-color: var(--mk-remove); }
 .mk-history-clear {
   margin-top: 8px;
@@ -337,8 +339,14 @@ export const CSS = `
   width: 100%;
 }
 .mk-dialog.mk-anim { animation: mk-grow var(--mk-dur) var(--mk-ease); }
-.mk-dialog-msg { font-size: 14px; font-weight: 600; color: var(--mk-ink); }
-.mk-dialog-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.mk-dialog-msg { font-size: 14px; font-weight: 600; color: var(--mk-ink); white-space: pre-line; }
+.mk-dialog-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
 .mk-btn.mk-danger {
   background: var(--mk-remove);
   border-color: var(--mk-remove);

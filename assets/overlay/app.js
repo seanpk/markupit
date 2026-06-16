@@ -211,12 +211,33 @@ export function boot() {
 
   async function doReset() {
     if (model.liveCount(state) === 0) return;
-    const ok = await confirm('Clear all annotations for this page?', {
-      okText: 'Clear',
-      cancelText: 'Cancel',
-      danger: true,
-    });
-    if (!ok) return;
+    const choice = await confirm(
+      'Clear all annotations for this page\nand reset for a new review?',
+      {
+        confirmText: 'Reset',
+        cancelText: 'Cancel',
+        extraText: 'Copy notes and Clear',
+        danger: true,
+      }
+    );
+    if (choice === 'cancel') return;
+
+    let copied = null;
+    if (choice === 'extra') {
+      const md = toMarkdown(state, { pageUrl: location.href, pageTitle: document.title });
+      copied = await copyText(md);
+    }
+    archiveAndClear();
+    if (choice === 'extra') {
+      toast(copied ? 'Copied notes — cleared (kept in history)' : 'Copy failed — cleared (kept in history)');
+    } else {
+      toast('Cleared — kept in history');
+    }
+  }
+
+  // Revert in-page treatments and archive the live set into history (shared by Reset and
+  // Copy-and-Clear). The notes are never discarded — they move into history.
+  function archiveAndClear() {
     for (const [id, entry] of Object.entries(state.annotations)) {
       const el = elements.get(id);
       if (!el) continue;
@@ -224,7 +245,6 @@ export function boot() {
       if (entry.remove) revertRemoveTreatment(el);
     }
     elements.clear();
-    // Keep the cleared notes as a timestamped history batch instead of discarding them.
     const at = Date.now();
     state = model.archiveAndReset(state, {
       id: `${at}-${state.revision}`,
@@ -236,7 +256,6 @@ export function boot() {
     popover.close();
     highlight.clear();
     render();
-    toast('Cleared — kept in history');
   }
 
   // --- history ---
@@ -251,7 +270,13 @@ export function boot() {
     toast(ok ? 'Copied notes to clipboard' : 'Copy failed — select and copy manually');
   }
 
-  function doDeleteHistory(id) {
+  async function doDeleteHistory(id) {
+    const choice = await confirm('Delete this history entry?\nThis can’t be undone.', {
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      danger: true,
+    });
+    if (choice !== 'confirm') return;
     state = model.deleteHistoryBatch(state, id);
     save(state, { immediate: true });
     render();
@@ -260,12 +285,12 @@ export function boot() {
 
   async function doClearHistory() {
     if (!(state.history || []).length) return;
-    const ok = await confirm('Clear all history? This can’t be undone.', {
-      okText: 'Clear history',
+    const choice = await confirm('Clear all history?\nThis can’t be undone.', {
+      confirmText: 'Clear history',
       cancelText: 'Cancel',
       danger: true,
     });
-    if (!ok) return;
+    if (choice !== 'confirm') return;
     state = model.clearHistory(state);
     save(state, { immediate: true });
     render();

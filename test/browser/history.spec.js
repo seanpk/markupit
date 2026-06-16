@@ -142,8 +142,9 @@ test('[QUE-7] history entries can be deleted individually and cleared entirely',
   await expandHistory(page);
   expect(await historyCount(page)).toBe(2);
 
-  // Delete one.
+  // Delete one — now guarded by a confirmation.
   await shadow(page).evaluate((el) => el.shadowRoot.querySelector('.mk-history-del').click());
+  await dialogButton(page, '.mk-dialog-ok');
   expect(await historyCount(page)).toBe(1);
 
   // Clear all (confirmed).
@@ -157,3 +158,34 @@ test('[QUE-7] history entries can be deleted individually and cleared entirely',
   );
   expect(hidden).toBe(true);
 });
+
+test('[QUE-7][EXP-1] "Copy notes and Clear" copies the brief and archives in one step', async ({
+  page,
+}) => {
+  await activate(page);
+  await addComment(page, 'h1', 'Heading note');
+  await openQueue(page);
+  await clickReset(page);
+  // The third button on the reset dialog.
+  await dialogButton(page, '.mk-dialog-extra');
+
+  const copied = await page.evaluate(() => window.__copied);
+  expect(copied).toContain('# Review notes');
+  expect(copied).toContain('Heading note');
+  expect(await entryCount(page)).toBe(0);
+  expect(await historyCount(page)).toBe(1);
+});
+
+test('[QUE-7] deleting a history entry can be cancelled', async ({ page }) => {
+  await activate(page);
+  await addComment(page, 'h1', 'Heading note');
+  await openQueue(page);
+  await clickReset(page);
+  await dialogButton(page, '.mk-dialog-ok');
+
+  await expandHistory(page);
+  await shadow(page).evaluate((el) => el.shadowRoot.querySelector('.mk-history-del').click());
+  await dialogButton(page, '.mk-dialog-cancel');
+  expect(await historyCount(page)).toBe(1);
+});
+
