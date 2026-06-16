@@ -95,6 +95,13 @@ No framework, **zero runtime dependencies**, pure ESM, no build step to use it.
 
 - **Proxy URL mode** — review a live `http(s)` page by fetching it server-side
   (asset rewriting + header stripping). Designed but not yet shipped.
+- **Draggable popover** — move the comment/edit box aside to read the surrounding
+  page while composing.
+- **Annotate interactive content** — let the reviewer trigger the page's own
+  actions (open a menu, expand an accordion) and annotate elements that only
+  appear after a JS-driven interaction, rather than intercepting every click.
+- **Multi-page reviews** — follow links and collect annotations across several
+  pages into a single review brief.
 
 ## Development
 
