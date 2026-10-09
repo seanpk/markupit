@@ -322,12 +322,23 @@ export function boot() {
         if (ae && ae.tagName === 'TEXTAREA') return;
 
         if (e.key === 'Escape') {
+          // Only claim Esc when there is something to dismiss (UX-13); otherwise the page
+          // keeps its own Esc behavior.
+          if (popover.isOpen() || selection.getCurrent() || queue.isOpen()) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+          queue.close();
           popover.close();
           highlight.clear();
           selection.setCurrent(null);
           return;
         }
         if (e.key === '?') {
+          if (!queue.isOpen()) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
           queue.toggle();
           return;
         }
