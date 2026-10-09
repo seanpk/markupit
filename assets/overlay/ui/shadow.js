@@ -14,6 +14,17 @@ export function createShadow() {
 
   const root = host.attachShadow({ mode: 'open' });
 
+  // Keys typed into our own inputs must not reach the host page (UX-12). Events cross the
+  // shadow boundary retargeted to `host`, so a page listener on `document` can't tell a
+  // textarea from a div and would act on the keystroke (e.g. Reveal.js navigating slides).
+  // Bubble phase on the host runs after our own handlers inside the shadow. No
+  // preventDefault: the characters must still land in the field.
+  for (const type of ['keydown', 'keyup', 'keypress']) {
+    host.addEventListener(type, (e) => {
+      if (isEditable(e.composedPath()[0])) e.stopPropagation();
+    });
+  }
+
   // Adopt the stylesheet (constructable if supported, else a <style> fallback).
   if ('adoptedStyleSheets' in root && typeof CSSStyleSheet !== 'undefined') {
     try {
@@ -35,6 +46,11 @@ function appendStyleTag(root) {
   const style = document.createElement('style');
   style.textContent = CSS;
   root.appendChild(style);
+}
+
+export function isEditable(node) {
+  if (!node || node.nodeType !== 1) return false;
+  return node.tagName === 'TEXTAREA' || node.tagName === 'INPUT' || node.isContentEditable === true;
 }
 
 export function destroyShadow(host) {
