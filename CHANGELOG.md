@@ -8,6 +8,15 @@ releases (see [Semantic Versioning](https://semver.org/spec/v2.0.0.html) §4).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Typing in the comment box no longer drives the reviewed page.** Keystrokes from
+  the overlay's text fields were reaching page-level key listeners (Reveal.js
+  slides advanced on "n", "f", space, arrows). They now stay inside the overlay.
+- **Esc is only taken when the overlay has something to dismiss.** It now also
+  closes the queue panel, and passes through to the page when nothing is open.
+  `?` is only taken when it opens the queue.
+
 ## [0.1.1] - 2026-06-16
 
 ### Added

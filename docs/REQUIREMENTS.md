@@ -182,6 +182,11 @@ strongly desired but may slip to a later milestone. **(MAY)** is optional.
   the reviewed page nor get overridden by it (e.g. style encapsulation).
 - **UX-11 (SHOULD)** — Confirmations and prompts use styled in-overlay UI, never
   native browser dialogs (`window.confirm`/`alert`/`prompt`).
+- **UX-12 (MUST)** — Keystrokes typed into the overlay's own text fields never reach
+  the reviewed page's key listeners (e.g. a slide deck's keyboard navigation); the
+  characters still land in the field.
+- **UX-13 (MUST)** — Esc (and `?` when it opens the queue) is consumed by the overlay
+  only when it has something to dismiss; with nothing to dismiss, Esc reaches the page.
 
 ## I. Quality & non-functional (`NFR-*`)
 
